@@ -41,6 +41,12 @@ bool RateCalc::setObjectTree(std::vector<string> names){
 	return true;
 };
 
+bool RateCalc::setObjectTree(string name, std::vector<double> cuts){
+	setObjectTree(name);
+	setTriggerCuts(name, cuts);
+	return true;
+};
+
 bool RateCalc::setObjectTree(std::vector<string> names, std::vector<double> cuts){
 	for( auto name : names){
 		setObjectTree(name);
@@ -95,24 +101,19 @@ std::pair<string, std::map<double, int> > RateCalc::evalTrigger(string name_hlto
 	if( set_prescl ){
 		tree_hlt->SetBranchAddress(Form("%s_Prescl",name_hltobj.c_str()), &hlt_bit ); 
 	}
+	int countx= 0;
 	for( auto idx : ROOT::TSeqI(tree_hlt->GetEntries())){
+		if( (countx % 1000) == 0 ) std::cout << "Iterating " << countx << std::endl;
 		map_hltobj[name_hltobj]->GetEntry(idx);
 		tree_hlt->GetEntry(idx);
 		fillTuple(map_cutNpass, obj, hlt_bit, Nrequiremuons);
+		countx ++;
 	}
 	return std::make_pair(name_hltobj, map_cutNpass);
 };
 
 
 bool RateCalc::evalAll(bool set_prescl = false){
-	int nCores = 8 ;
-	ROOT::EnableImplicitMT();
-	ROOT::TProcessExecutor mpe(nCores);
-
-	//auto& res= mpe.Map(func, v_names);
-	//for( auto item : res ){
-	//	map_cutNpasses[item.first] = item.second;
-	//}
 	for( auto name_ : v_names ){
 		string name = name_.first;
 		map_cutNpasses[name] = evalTrigger(name).second;
@@ -140,7 +141,6 @@ void RateCalc::fillTuple( std::map<double, int>& tuple , HltObj obj, int hlt_bit
 			}
 		}
 		tupleit++;
-
 	};
 };
 

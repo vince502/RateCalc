@@ -12,6 +12,7 @@ class HltInput{
 		HltInput(string name_file);
 		TTree* getObjectTree(string name_hltobj);
 		TTree* getHltTree();
+		string name_opened_file;
 	private :
 		TFile* file_hlt;
 		TTree* tree_hlt;

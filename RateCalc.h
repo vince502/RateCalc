@@ -22,6 +22,7 @@ class RateCalc : public HltInput {
 		void setTriggerCuts(std::vector<double> cuts);
 		void setTriggerCuts(string name_hltobj, std::vector<double> cuts);
 		bool setObjectTree(string name_hltobj);
+		bool setObjectTree(string name, std::vector<double> cuts);
 		bool setObjectTree(std::vector<string> names);
 		bool setObjectTree(std::vector<string> names, std::vector<double> cuts);
 		bool unsetObjectTree(string name_hltobj);
@@ -31,6 +32,7 @@ class RateCalc : public HltInput {
 		bool evalAll( bool set_prescl = false );
 		std::unordered_map<string, std::map<double, double> > getRates();
 		std::unordered_map<string, std::map<double, int> > map_cutNpasses;
+		std::map<string, bool> v_names;
 
 	protected :
 		bool checkObjectTree(string name_hltobj);
@@ -38,7 +40,6 @@ class RateCalc : public HltInput {
 		void initTuple(std::map<double, int>& tuple, std::vector<double> cuts);
 		bool passCut(HltObj obj, double cut, int muons);
 	private :
-		std::map<string, bool> v_names;
 		std::unordered_map<string, std::vector<double> > map_cuts;
 		std::unordered_map<string, TTree*> map_hltobj;
 
