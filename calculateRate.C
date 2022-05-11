@@ -60,7 +60,10 @@ void calculateRate(){
 			graps[result.first]->AddPoint(key_val.first, key_val.second);
 		}
 		graps[result.first]->SetName(result.first.c_str());
+		graps[result.first]->SetMarkerStyle(kFullCircle);
+		graps[result.first]->SetMarkerSize(1.2);
 		graps[result.first]->GetXaxis()->SetTitle("p_T cut (GeV/c)");
+		graps[result.first]->GetYaxis()->SetTitle("Rate (HLT L(N) / L1 Seed)");
 		graps[result.first]->GetYaxis()->SetLimits(0,1);
 		graps[result.first]->GetYaxis()->SetRangeUser(0,1);
 		graps[result.first]->Write();
