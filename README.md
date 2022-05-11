@@ -15,8 +15,10 @@ RateCalc.h
 ```
 RateCalc class inherits HltInput, getters and calculation are all included in here
 
-The `calculateRate.C` macro runs a calculator for all given HLT triggers in given file. Modify the input file name and imply run,
+The `calculateRate.C` macro runs a calculator for all given HLT triggers in given file. Modify the input file name and imply run
 
 ```bash
 root -b -q calculateRate.C
-```.
+```
+.
+
