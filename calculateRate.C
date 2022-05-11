@@ -21,7 +21,6 @@ void calculateRate(){
 		_calc.setAllHLT();
 		for( auto word : _calc.v_names ){
 			v_names.push_back(word.first);
-			std::cout << word.first << std::endl;
 		}
 	}
 
@@ -31,7 +30,7 @@ void calculateRate(){
 
 	//Define cuts
 	std::vector<double> cuts;
-	for(auto idx : ROOT::TSeqI(11)){
+	for(auto idx : ROOT::TSeqI(31)){
 		cuts.push_back(0.5 *(double) idx);
 	}
 

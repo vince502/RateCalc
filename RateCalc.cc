@@ -2,6 +2,8 @@
 
 #include "RateCalc.h"
 #include "HltInput.cc"
+#include <future>
+#include <thread>
 
 
 RateCalc::RateCalc(string name_file) : HltInput(name_file){
@@ -103,10 +105,12 @@ std::pair<string, std::map<double, int> > RateCalc::evalTrigger(string name_hlto
 	}
 	int countx= 0;
 	for( auto idx : ROOT::TSeqI(tree_hlt->GetEntries())){
-		if( (countx % 1000) == 0 ) std::cout << "Iterating " << countx << std::endl;
-		map_hltobj[name_hltobj]->GetEntry(idx);
+		if( (countx % 50000) == 0 ) std::cout << Form("Trig [%s], entry ", name_hltobj.c_str()) << countx << std::endl;
 		tree_hlt->GetEntry(idx);
-		fillTuple(map_cutNpass, obj, hlt_bit, Nrequiremuons);
+		if(hlt_bit){
+			map_hltobj[name_hltobj]->GetEntry(idx);
+			fillTuple(map_cutNpass, obj, Nrequiremuons);
+		}
 		countx ++;
 	}
 	return std::make_pair(name_hltobj, map_cutNpass);
@@ -126,19 +130,20 @@ bool RateCalc::checkObjectTree(string name_hltobj){
 	else return false;
 };
 
-void RateCalc::fillTuple( std::map<double, int>& tuple , HltObj obj, int hlt_bit, int muons){
+void RateCalc::fillTuple( std::map<double, int>& tuple , HltObj obj, int muons){
 	std::map<double, int>::reverse_iterator tupleit = tuple.rbegin();
-	 while( tupleit != tuple.rend()){
-		if(hlt_bit){
-			tuple[(*tupleit).first] += ( (int) passCut(obj, (*tupleit).first, muons) );
-			if(tuple[(*tupleit).first] !=0 ){ 
+	double firstPass = -1;
+	while( tupleit != tuple.rend()){
+//		std::cout << ( (int) passCut(obj, (*tupleit).first, muons) ) << std::endl; 
+//		std::cout << tuple[(*tupleit).first] << std::endl; 
+		if( passCut(obj, (*tupleit).first, muons) ) firstPass = (*tupleit).first;
+//		tuple[(*tupleit).first] += ( (int) passCut(obj, (*tupleit).first, muons) );
+		if((*tupleit).first <= firstPass ){ 
+	 		while( tupleit != tuple.rend()){
+				tuple[(*tupleit).first] ++;
 				tupleit++;
-	 			while( tupleit != tuple.rend()){
-					tuple[(*tupleit).first] += 1;
-					tupleit++;
-				}
-				break;
 			}
+			return;
 		}
 		tupleit++;
 	};
@@ -154,10 +159,8 @@ void RateCalc::initTuple(std::map<double, int>& tuple, std::vector<double> cuts)
 bool RateCalc::passCut(HltObj obj, double cut, int muons){
 	auto pts = *obj.pt;
 	auto etas = *obj.eta;
-	int num_cands = pts.size();
 	int passMuons = 0;
-	for( auto idx : ROOT::TSeqI(num_cands) ){
-//		std::cout << Form("%.2f, %.2f", etas[idx], pts[idx] ) << std::endl;
+	for( auto idx : ROOT::TSeqI(pts.size()) ){
 		if( fabs(etas[idx]) < 2.4 ){
 			if( pts[idx] >= cut ) passMuons ++;
 		}

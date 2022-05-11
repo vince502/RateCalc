@@ -36,7 +36,7 @@ class RateCalc : public HltInput {
 
 	protected :
 		bool checkObjectTree(string name_hltobj);
-		void fillTuple(std::map<double, int>& tuple, HltObj obj, int hlt_bit, int muons);
+		void fillTuple(std::map<double, int>& tuple, HltObj obj, int muons);
 		void initTuple(std::map<double, int>& tuple, std::vector<double> cuts);
 		bool passCut(HltObj obj, double cut, int muons);
 	private :
