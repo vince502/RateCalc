@@ -7,9 +7,6 @@
 
 static int UseNCores = 30;
 
-std::unordered_map<string, std::map<double, double> > result_map;
-std::map<string, TGraph*> graps;
-
 void calculateRate(){
 	string n_file = "openHLT_Gmenu_JPsiEMB_NoSPClimit_v1230_v8.root";
 //	string n_file = "openHLT_Gmenu_JPsi_v1230_v9.root";
@@ -24,9 +21,9 @@ void calculateRate(){
 		}
 	}
 
-	//Enable MultiThreading
+	//Enable MultiThreading, the thread executor creates threads per trigger and make use of the available CPU cores
 	ROOT::EnableImplicitMT(UseNCores);
-	ROOT::TThreadExecutor mpe(UseNCores);
+	ROOT::TThreadExecutor mpe(v_names.size());
 
 	//Define cuts
 	std::vector<double> cuts;
@@ -41,6 +38,10 @@ void calculateRate(){
 		calc.evalAll();
 		return calc.getRates();
 	};
+
+	//Result container
+	std::unordered_map<string, std::map<double, double> > result_map;
+	std::map<string, TGraph*> graps;
 
 	//Map results
 	const auto& res = mpe.Map(extractRates, ROOT::TSeqI(v_names.size()));
