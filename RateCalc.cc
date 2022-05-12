@@ -87,7 +87,7 @@ std::unordered_map<string, std::map<double, double> > RateCalc::getRates(){
 	return dict;
 };
 
-std::pair<string, std::map<double, int> > RateCalc::evalTrigger(string name_hltobj, const bool set_prescl = false){
+std::pair<string, std::map<double, int> > RateCalc::evalTrigger(string name_hltobj, int maxEvt = -1, const bool set_prescl = false){
 	if( !checkObjectTree(name_hltobj) ) { std::cout << name_hltobj.c_str() << " not set!" << std::endl; return std::make_pair(name_hltobj, std::map<double, int> {}); }
 
 	HltObj obj{}; 
@@ -104,7 +104,9 @@ std::pair<string, std::map<double, int> > RateCalc::evalTrigger(string name_hlto
 		tree_hlt->SetBranchAddress(Form("%s_Prescl",name_hltobj.c_str()), &hlt_bit ); 
 	}
 	int countx= 0;
+	int evtSize = (maxEvt >0) ? maxEvt : tree_hlt->GetEntries();
 	for( auto idx : ROOT::TSeqI(tree_hlt->GetEntries())){
+		if ( idx > evtSize) break;
 		if( (countx % 50000) == 0 ) std::cout << Form("Trig [%s], entry ", name_hltobj.c_str()) << countx << std::endl;
 		tree_hlt->GetEntry(idx);
 		if(hlt_bit){
@@ -117,10 +119,10 @@ std::pair<string, std::map<double, int> > RateCalc::evalTrigger(string name_hlto
 };
 
 
-bool RateCalc::evalAll(bool set_prescl = false){
+bool RateCalc::evalAll( int maxEvt = -1, bool set_prescl = false){
 	for( auto name_ : v_names ){
 		string name = name_.first;
-		map_cutNpasses[name] = evalTrigger(name).second;
+		map_cutNpasses[name] = evalTrigger(name, maxEvt).second;
 	}
 	return true;
 };

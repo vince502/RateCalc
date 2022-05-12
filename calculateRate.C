@@ -5,10 +5,12 @@
 #include <future>
 #include <execution>
 
-static int UseNCores = 30;
+static int UseNCores = 40;
 
 void calculateRate(){
 	string n_file = "openHLT_Gmenu_JPsiEMB_NoSPClimit_v1230_v8.root";
+	n_file = "openHLT_HIMuon_MBPD2018_v1230_v9.root";
+	n_file = "openHLT_CPUlegacy_MB_1210_pre3.root";
 //	string n_file = "openHLT_Gmenu_JPsi_v1230_v9.root";
 
 	//String vector for trigger names
@@ -20,6 +22,7 @@ void calculateRate(){
 			v_names.push_back(word.first);
 		}
 	}
+	v_names = {"HLT_HIL3Mu0NHitQ10_L2Mu0_MAXdR3p5_M1to5_v", "HLT_HIL3Mu2p5NHitQ10_L2Mu2_M7toinf_v", "HLT_HIL1DoubleMuOpen_v", "HLT_HIL2DoubleMuOpen_v", "HLT_HIL3DoubleMuOpen_v"};
 
 	//Enable MultiThreading, the thread executor creates threads per trigger and make use of the available CPU cores
 	ROOT::EnableImplicitMT(UseNCores);
@@ -32,10 +35,11 @@ void calculateRate(){
 	}
 
 	//Run calculator
+	int max_events = 35*1e+4;
 	auto extractRates = [=](int idx){
 		RateCalc calc = RateCalc(n_file.c_str());
 		calc.setObjectTree(v_names[idx], cuts);
-		calc.evalAll();
+		calc.evalAll(max_events);
 		return calc.getRates();
 	};
 
@@ -52,7 +56,7 @@ void calculateRate(){
 	}
 
 	//Draw graphs
-	TFile* output = new TFile("output.root", "recreate");
+	TFile* output = new TFile("output_mbpd_2018Menu.root", "recreate");
 	output->cd();
 	for( auto result : result_map ){
 		graps[result.first] = new TGraph();
@@ -63,7 +67,7 @@ void calculateRate(){
 		graps[result.first]->SetMarkerStyle(kFullCircle);
 		graps[result.first]->SetMarkerSize(1.2);
 		graps[result.first]->GetXaxis()->SetTitle("p_T cut (GeV/c)");
-		graps[result.first]->GetYaxis()->SetTitle("Rate (HLT L(N) / L1 Seed)");
+		graps[result.first]->GetYaxis()->SetTitle("Rate (HLT L(N) / Total Events)");
 		graps[result.first]->GetYaxis()->SetLimits(0,1);
 		graps[result.first]->GetYaxis()->SetRangeUser(0,1);
 		graps[result.first]->Write();

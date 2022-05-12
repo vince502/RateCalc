@@ -28,8 +28,8 @@ class RateCalc : public HltInput {
 		bool unsetObjectTree(string name_hltobj);
 		bool unsetObjectTree(std::vector<string> names);
 		int needMuons(string name_hltobj);
-		std::pair<string, std::map<double, int> > evalTrigger(string name_hltobj, bool set_prescl = false);
-		bool evalAll( bool set_prescl = false );
+		std::pair<string, std::map<double, int> > evalTrigger(string name_hltobj, int maxEvt = -1, bool set_prescl = false);
+		bool evalAll( int maxEvt = -1, bool set_prescl = false );
 		std::unordered_map<string, std::map<double, double> > getRates();
 		std::unordered_map<string, std::map<double, int> > map_cutNpasses;
 		std::map<string, bool> v_names;
