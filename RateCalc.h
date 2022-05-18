@@ -39,6 +39,7 @@ class RateCalc : public HltInput {
 		void fillTuple(std::map<double, int>& tuple, HltObj obj, int muons);
 		void initTuple(std::map<double, int>& tuple, std::vector<double> cuts);
 		bool passCut(HltObj obj, double cut, int muons);
+		int evaluated_evts = -1;
 	private :
 		std::unordered_map<string, std::vector<double> > map_cuts;
 		std::unordered_map<string, TTree*> map_hltobj;

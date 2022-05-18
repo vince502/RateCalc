@@ -9,8 +9,8 @@ static int UseNCores = 40;
 
 void calculateRate(){
 	string n_file = "openHLT_Gmenu_JPsiEMB_NoSPClimit_v1230_v8.root";
-	n_file = "openHLT_HIMuon_MBPD2018_v1230_v9.root";
-	n_file = "openHLT_CPUlegacy_MB_1210_pre3.root";
+//	n_file = "openHLT_HIMuon_MBPD2018_v1230_v9.root";
+	n_file = "openHLT_HIMuon_LegacyTrigger_MBPD2018.root";
 //	string n_file = "openHLT_Gmenu_JPsi_v1230_v9.root";
 
 	//String vector for trigger names
@@ -35,7 +35,7 @@ void calculateRate(){
 	}
 
 	//Run calculator
-	int max_events = 35*1e+4;
+	int max_events = -1;
 	auto extractRates = [=](int idx){
 		RateCalc calc = RateCalc(n_file.c_str());
 		calc.setObjectTree(v_names[idx], cuts);
@@ -56,7 +56,7 @@ void calculateRate(){
 	}
 
 	//Draw graphs
-	TFile* output = new TFile("output_mbpd_2018Menu.root", "recreate");
+	TFile* output = new TFile("output_Rates_MB2018_legacy.root", "recreate");
 	output->cd();
 	for( auto result : result_map ){
 		graps[result.first] = new TGraph();

@@ -77,7 +77,7 @@ int RateCalc::needMuons(string name_hltobj){
 };
 
 std::unordered_map<string, std::map<double, double> > RateCalc::getRates(){
-	int total_evt = tree_hlt->GetEntries();
+	int total_evt = (evaluated_evts < 0 ) ? tree_hlt->GetEntries() : evaluated_evts;
 	std::unordered_map<string, std::map<double, double> > dict;
 	for(auto cont : map_cutNpasses){
 		for( auto vals : cont.second){
@@ -124,6 +124,7 @@ bool RateCalc::evalAll( int maxEvt = -1, bool set_prescl = false){
 		string name = name_.first;
 		map_cutNpasses[name] = evalTrigger(name, maxEvt).second;
 	}
+	evaluated_evts = maxEvt;
 	return true;
 };
 
