@@ -1,6 +1,6 @@
 # Rate Calculator for Muon base triggers
 
-This is a simple calulator for muon triggers to estimate firing rate.
+Hi, This is a simple calulator for muon triggers to estimate firing rate.
 
 ## Function definition
 
